@@ -50,3 +50,4 @@ export function Err<T, E extends RedosError>(error: E): Result<T, E> {
 }
 
 export type Result<T, E extends RedosError> = Left<T, E> | Right<T, E>;
+

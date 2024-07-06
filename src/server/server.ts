@@ -46,8 +46,8 @@ class RedosServer implements IServer {
     return this._instance || (this._instance = new RedosServer(eventLoop));
   }
 
+  // TODO: Type output with custom, RESP encoded type
   public write(output: string, connectionId: string): Result<null, RedosError> {
-    // TODO: Parse output into RESP Buffer before sending
     const conn: Connection | undefined = this.connections.get(connectionId);
     if (!conn) {
       return Err(
@@ -63,7 +63,6 @@ class RedosServer implements IServer {
     return Ok(null);
   }
 }
-
 
 const server: IServer = RedosServer.Instance;
 export default server;

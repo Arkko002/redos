@@ -8,6 +8,7 @@ export interface IEventLoop {
 // TODO: Implement all queues and maintanance tasks
 // https://github.com/redis/redis/blob/unstable/src/ae.c#L342
 // TODO: Implement timed events: https://redis.io/docs/latest/operate/oss_and_stack/reference/internals/internals-rediseventlib/
+// TODO: Atomic operations
 export class EventLoop implements IEventLoop {
   private static _instance: EventLoop;
   private stop: boolean;
@@ -63,6 +64,7 @@ export interface LoopEvent<T> {
   handler: LoopEventHandler<T>;
 }
 
+// TODO: Should singleton instances be passed through call tree or imported directly into modules as needed?
 export interface LoopEventHandler<T> {
   (data: T, eventLoop: IEventLoop): void;
 }

@@ -4,6 +4,8 @@ const createArray = (data: string[]): string =>
 
 const createBulkString = (data: string): string => `$${data.length}\r\n${data}`;
 
+const createNilBulkString = (): string => "$-1\r\n";
+
 const createSimpleString = (data: string): string => `+${data}\r\n`;
 
 const createError = (data: string): string => `-${data}\r\n`;

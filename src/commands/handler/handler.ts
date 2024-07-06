@@ -1,26 +1,16 @@
 import { RedosError, Err, Ok, Result } from "../../error-handling";
-import {
-  EventLoop,
-  IEventLoop,
-  LoopEvent,
-  LoopEventHandler,
-} from "../../event";
+import { IEventLoop, LoopEvent, LoopEventHandler } from "../../event";
 import { Command } from "../command";
 import { commandsMap } from "../commands";
 import { RESP, RESPData, parse } from "../resp/parser";
 import { CommandHandlerErrorKind } from "./handler.error";
 
+// TODO: This module should handle only lexing / tokenizing without validating if commands and their arguments are valid
 export interface CommandEvent {
   connectionId: string;
-  name: CommandName;
+  name: string;
   args: string[];
   handler: CommandEventHandler;
-}
-
-// TODO: Possibly not needed anymore since we have Command
-export enum CommandName {
-  PING = "PING",
-  ECHO = "ECHO",
 }
 
 export const handleCommand = (
@@ -78,7 +68,7 @@ const mapRESPToCommandEvents = (
 
       commandEvents.push({
         connectionId,
-        name: command.name as CommandName,
+        name: command.name.toLowerCase(),
         args: argsStr,
         handler: command.handler,
       });
@@ -102,7 +92,7 @@ const getCommandArguments = (
   resp: RESP[],
   cursor: number,
 ): { args: RESPData[]; cursorPosition: number } => {
-  let args: RESPData[] = [];
+  const args: RESPData[] = [];
 
   while (cursor < resp.length) {
     if (isCommand(resp[cursor])) {
@@ -116,26 +106,24 @@ const getCommandArguments = (
   return { args, cursorPosition: cursor };
 };
 
-const peekNextElement = (
-  resp: RESP[],
-  cursor: number,
-): Result<RESP, RedosError> => {
-  if (cursor >= resp.length - 1) {
-    Err(
-      new RedosError(
-        `Cursor outside of bounds`,
-        CommandHandlerErrorKind.NO_NEXT_ELEMENT,
-      ),
-    );
-  }
-
-  return Ok(resp[cursor + 1]);
-};
+// const peekNextElement = (
+//   resp: RESP[],
+//   cursor: number,
+// ): Result<RESP, RedosError> => {
+//   if (cursor >= resp.length - 1) {
+//     Err(
+//       new RedosError(
+//         `Cursor outside of bounds`,
+//         CommandHandlerErrorKind.NO_NEXT_ELEMENT,
+//       ),
+//     );
+//   }
+//
+//   return Ok(resp[cursor + 1]);
+// };
 
 const getCommand = (resp: RESP): Result<Command, RedosError> => {
-  const command: Command | undefined = commandsMap.get(
-    resp.data as CommandName,
-  );
+  const command: Command | undefined = commandsMap.get(resp.data);
   if (command === undefined) {
     return Err(
       new RedosError(
@@ -149,7 +137,7 @@ const getCommand = (resp: RESP): Result<Command, RedosError> => {
 };
 
 const isCommand = (resp: RESP): boolean => {
-  return commandsMap.has(resp.data as CommandName);
+  return commandsMap.has(resp.data);
 };
 
 // TODO: https://github.com/redis/redis/blob/unstable/src/networking.c#L2618
@@ -180,3 +168,4 @@ const isCommand = (resp: RESP): boolean => {
 //   }
 //   return Ok([]);
 // };
+

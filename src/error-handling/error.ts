@@ -2,9 +2,10 @@ import { CommandsErrorKind } from "../commands/commands/commands.error";
 import { CommandHandlerErrorKind } from "../commands/handler/handler.error";
 import { RESPErrorKind } from "../commands/resp/resp.error";
 import { DatabaseErrorKind } from "../db/db";
+import { RedosStringErrorKind } from "../db/types";
 import { ConnectionErrorKind } from "../server/connection.error";
 import { ServerErrorKind } from "../server/server.error";
-import { PubSubErrorKind } from "../stream/pubsub.error";
+import { PubSubErrorKind } from "../stream/pubsub/pubsub.error";
 import { StreamErrorKind } from "../stream/stream/stream.error";
 import { OptionErrorKind } from "./option";
 
@@ -25,6 +26,7 @@ export type ErrorKind =
   | CommandsErrorKind
   | DatabaseErrorKind
   | PubSubErrorKind
-| StreamErrorKind
+  | StreamErrorKind
+  | RedosStringErrorKind
   | ConnectionErrorKind
   | ServerErrorKind;
